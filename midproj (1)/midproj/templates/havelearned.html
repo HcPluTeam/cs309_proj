@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block script %}
+     function onSearch(){
+    setTimeout(function(){
+var tableid = document.getElementById('thistable');
+var rowsLength = tableid.rows.length;
+    var key0 = document.getElementById('key0').value;
+for(var i=1;i<rowsLength;i++){
+    var searchText0 = tableid.rows[i].cells[0].innerHTML;
+if(searchText0.match(key0)){tableid.rows[i].style.display='';}
+    else{ tableid.rows[i].style.display='none';}
+}
+},200);
+    }
+{% endblock %}
+{% block content %}
+    <center><h1>查询和专业相关的课程</h1></center>
+    <a href="../">返回</a>
+{% endblock %}
+{% block formtable2 %}
+    <center>查询课程代码<input name="key0" type="text" id="key0" onkeydown="onSearch()" value="" /></center>
+{% endblock %}
+{% block table %}
+  <table class="table table-bordered table-striped" id="thistable">
+        <tr>
+            <th>课程代码</th>
+            <th>课程名称</th>
+            <th>学分</th>
+            <th>实验学分</th>
+            <th>课程类型</th>
+    </tr>
+        {% for res in courseresult %}
+    <tr>
+       <td>{{ res[0] }}</td>
+        <td>{{ res[1] }}</td>
+        <td>{{ res[2] }}</td>
+        {% if res[3]==-1 %}<td>没有学分</td>{% else %}<td>{{ res[3] }}</td>{% endif %}
+
+                {% if res[4]=='EA' or res[4]=='EB' or res[4]=='EC' or res[4]=='E' %}<td>专业基础课</td>
+                {% elif res[4]=='OA' or res[4]=='OB' or res[4]=='OC' or res[4]=='O' %}<td>专业选修课</td>
+                {% elif res[4]=='CA' or res[4]=='CB' or res[4]=='CC' or res[4]=='C'%}<td>专业必修课</td>
+                {% elif res[4]=='P'%}<td>专业实习课程</td>
+                {% endif %}
+    </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
