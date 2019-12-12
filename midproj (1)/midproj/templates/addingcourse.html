@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block flash %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="text-align: center">
+            <strong>{{ message }}</strong></div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+{% endblock %}
+{% block content %}
+     <center><h1>添加课程</h1></center>
+    <a href="../">返回</a>
+{% endblock %}
+{% block formtable %}
+    <form action="/checker/{{ thisid }}/addingcourse/" method="post">
+    <center><caption id="login_a"><h2>请输入本年要添加的课程名和课程代码</h2></caption></center>
+    <center>课程名:<input type="text" name="course_name"><br></center>
+    <center>课程代码:<input type="text" name="course_code"><br></center>
+<center><input type="submit" id="add_button" value="提交" ></center>
+</form>
+{% endblock %}

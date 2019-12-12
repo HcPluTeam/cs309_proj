@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block script %}
+    function onSearch(){
+setTimeout(function(){
+var tableid = document.getElementById('thistable');
+var rowsLength = tableid.rows.length;
+    var key0 = document.getElementById('key0').value;
+    var key1 = document.getElementById('key1').value;
+    var key2 = document.getElementById('key2').value;
+    var key3 = document.getElementById('key3').value;
+    var key4 = document.getElementById('key4').value;
+for(var i=1;i<rowsLength;i++){
+    var searchText0 = tableid.rows[i].cells[0].innerHTML;
+    var searchText1 = tableid.rows[i].cells[1].innerHTML;
+    var searchText2 = tableid.rows[i].cells[4].innerHTML;
+    var searchText3 = tableid.rows[i].cells[6].innerHTML;
+    var searchText4 = tableid.rows[i].cells[7].innerHTML;
+if(searchText0.match(key0)&&searchText1.match(key1)&&searchText2.match(key2)&&searchText3.match(key3)&&searchText4.match(key4)){tableid.rows[i].style.display='';}
+    else{ tableid.rows[i].style.display='none';}
+}
+},200);
+}
+{% endblock %}
+{% block content %}
+    <a href="../">返回</a>
+{% endblock %}
+{% block formtable2 %}
+<center>查询课程代码<input name="key0" type="text" id="key0" onkeydown="onSearch()" value="" /></center>
+<center>查询课程名称<input name="key1" type="text" id="key1" onkeydown="onSearch()" value="" /></center>
+<center>查询课程类型<input name="key2" type="text" id="key2" onkeydown="onSearch()" value="" /></center>
+<center>查询开课系<input name="key3" type="text" id="key3" onkeydown="onSearch()" value="" /></center>
+<center>查询开课季节<input name="key4" type="text" id="key4" onkeydown="onSearch()" value="" /></center>
+{% endblock %}
+{% block formtable %}
+<form action="/{{ character }}/{{ thisid }}/query/" method="post">
+    <center><caption id="login_a"><h2>请在此输入你要查询的内容,当前是{{ curdpt }}专业</h2></caption></center>
+    <center>专业名:
+    <select name="select_dptdept">
+    {% for i in result %}
+        <option value={{ i[0] }}>{{i[1]}}</option>
+    {% endfor %}
+    </select></center>
+<center><input type="submit" id="login_button" value="提交" ></center>
+</form>
+{% endblock %}
+{% block table %}
+    <table class="table table-bordered table-striped" id="thistable">
+        <tr>
+            <th>课程代码</th>
+    <th>课程名称</th>
+    <th>学分</th>
+    <th>实验学分</th>
+    <th>课程类型</th>
+        <th>先修要求</th>
+        <th>开课系</th>
+        <th>开课季节</th>
+    </tr>
+        {% for res in dptresult %}
+    <tr>
+       <td>{{ res[0] }}</td>
+        <td>{{ res[1] }}</td>
+        <td>{{ res[2] }}</td>
+        {% if res[3]==-1 %}<td>没有学分</td>{% else %}<td>{{ res[3] }}</td>{% endif %}
+            {% if res[4]=='EA' or res[4]=='EB' or res[4]=='EC' or res[4]=='E' %}<td>专业基础课</td>
+            {% elif res[4]=='OA' or res[4]=='OB' or res[4]=='OC' or res[4]=='O' %}<td>专业选修课</td>
+            {% elif res[4]=='CA' or res[4]=='CB' or res[4]=='CC' or res[4]=='C'%}<td>专业必修课</td>
+            {% elif res[4]=='P'%}<td>专业实习课程</td>
+    {% endif %}
+              <td>{{ res[5] }}</td>
+        <td>{{ res[6] }}</td>
+    <td>{{ res[7] }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+{% endblock %}

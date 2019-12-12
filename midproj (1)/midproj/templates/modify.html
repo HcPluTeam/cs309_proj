@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+    <a href="../">返回</a>
+    <center><h3>2019级{{ deptname }}专业培养方案</h3></center>
+    <h5>一、系部专业介绍</h5>
+    <pre>
+    {{ chapterlist[0] }}
+    </pre>
+    <h5>二、专业培养目标及培养要求</h5>
+    <pre>
+    {{ chapterlist[1] }}
+    </pre>
+    <h5>三、学制，授予学位及毕业学分要求</h5>
+    <pre>
+    {{ chapterlist[2] }}
+    </pre>
+    <h5>四、专业类及专业代码</h5>
+    <pre>
+    {{ chapterlist[3] }}
+    </pre>
+    <h5>五、专业主要（干）课程</h5>
+    <pre>
+    {{ chapterlist[4] }}
+    </pre>
+    <h5>六、主要实践性环节</h5>
+    <pre>
+    {{ chapterlist[5] }}
+    </pre>
+    <h5>七、进入专业前应修读完成课程的要求</h5>
+    <pre>
+    {{ chapterlist[6] }}
+    </pre>
+    <h5>八、通识必修课程教学修读要求</h5>
+    <pre>
+    {{ chapterlist[7] }}
+    </pre>
+    <h5>九、通识选修课程修读要求</h5>
+    <pre>
+    {{ chapterlist[8] }}
+    </pre>
+    <h5>十、专业课程一览</h5>
+{% endblock %}
+
+{% block table %}
+       <center>2019级{{ deptname }}专业课程一览</center>
+    <table class="table table-condensed" id="table" >
+    <tr>
+        <th>课程代码</th>
+        <th>课程名称</th>
+        <th>学分</th>
+        <th>实验学分</th>
+        <th>课程类型</th>
+    </tr>
+        {% for res in course %}
+    <tr>
+       <td>{{ res[0] }}</td>
+        <td>{{ res[1] }}</td>
+        <td>{{ res[2] }}</td>
+        {% if res[3]==-1 %}<td>没有学分</td>{% else %}<td>{{ res[3] }}</td>{% endif %}
+            {% if res[4]=='EA' or res[4]=='EB' or res[4]=='EC' or res[4]=='E' %}<td>专业基础课</td>
+            {% elif res[4]=='OA' or res[4]=='OB' or res[4]=='OC' or res[4]=='O' %}<td>专业选修课</td>
+            {% elif res[4]=='CA' or res[4]=='CB' or res[4]=='CC' or res[4]=='C'%}<td>专业必修课</td>
+            {% elif res[4]=='P'%}<td>专业实习课程</td>
+        {% endif %}
+        <td>{{ res[5] }}</td>
+        <td>{{ res[6] }}</td>
+    <td>{{ res[7] }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
+{% block table2 %}
+       <center>2019级{{ deptname }}专业实践课程一览</center>
+    <table class="table table-condensed" id="table2">
+    <tr>
+        <th>课程代码</th>
+        <th>课程名称</th>
+        <th>学分</th>
+        <th>实验学分</th>
+        <th>课程类型</th>
+        <th>先修要求</th>
+        <th>开课系</th>
+        <th>开课季节</th>
+    </tr>
+        {% for res in labcourse %}
+    <tr>
+       <td>{{ res[0] }}</td>
+        <td>{{ res[1] }}</td>
+        <td>{{ res[2] }}</td>
+        {% if res[3]==-1 %}<td>没有学分</td>{% else %}<td>{{ res[3] }}</td>{% endif %}
+            {% if res[4]=='EA' or res[4]=='EB' or res[4]=='EC' or res[4]=='E' %}<td>专业基础课</td>
+            {% elif res[4]=='OA' or res[4]=='OB' or res[4]=='OC' or res[4]=='O' %}<td>专业选修课</td>
+            {% elif res[4]=='CA' or res[4]=='CB' or res[4]=='CC' or res[4]=='C'%}<td>专业必修课</td>
+            {% elif res[4]=='P'%}<td>专业实习课程</td>
+        {% endif %}
+        <td>{{ res[5] }}</td>
+        <td>{{ res[6] }}</td>
+    <td>{{ res[7] }}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <pre>
+    {{ chapterlist[9] }}
+    </pre>
+{% endblock %}

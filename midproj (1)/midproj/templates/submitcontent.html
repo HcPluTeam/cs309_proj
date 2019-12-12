@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block flash %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="text-align: center">
+            <strong>{{ message }}</strong></div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+{% endblock %}
+{% block content %}
+    <a href="../">返回</a>
+{% endblock %}
+{% block formtable %}
+    <form>
+<center>在此处编辑{{ deptname }}专业的培养方案文本</center>
+    <center>一、系部专业介绍:<textarea class="form-control" rows="10" name="t1"  >{{ chapterlist[0] }}</textarea></center>
+    <center>二、专业培养目标及培养要求:<textarea class="form-control" rows="10" name="t2"  >{{ chapterlist[1] }}</textarea></center>
+    <center>三、学制，授予学位及毕业学分要求:<textarea class="form-control" rows="10" name="t3"  >{{ chapterlist[2] }}</textarea></center>
+    <center>四、专业类及专业代码:<textarea class="form-control" rows="10" name="t4"  >{{ chapterlist[3] }}</textarea></center>
+    <center>五、专业主要（干）课程:<textarea class="form-control" rows="10" name="t5"  >{{ chapterlist[4] }}</textarea></center>
+    <center>六、主要实践性环节:<textarea type="text" class="form-control" rows="10" name="t6" >{{ chapterlist[5] }}</textarea></center>
+    <center>七、进入专业前应修读完成课程的要求:<textarea class="form-control" rows="10" name="t7"  >{{ chapterlist[6] }}</textarea></center>
+    <center>八、通识必修课程教学修读要求:<textarea class="form-control" rows="10" name="t8"  >{{ chapterlist[7] }}</textarea></center>
+    <center>九、通识选修课程修读要求:<textarea class="form-control" rows="10" name="t9"  >{{ chapterlist[8] }}</textarea></center>
+    <center>十、专业课程一览(注释):<textarea class="form-control" rows="10" name="t10" >{{ chapterlist[9] }}</textarea></center>
+<center><input type="submit" id="submit_button" value="上传" ></center>
+    </form>
+{% endblock %}
