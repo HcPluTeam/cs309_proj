@@ -1,0 +1,928 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<html>
+<!-- 新 Bootstrap4 核心 CSS 文件 -->
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<!-- bootstrap.bundle.min.js 用于弹窗、提示、下拉菜单，包含了 popper.min.js -->
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="/static/schema.scss">
+
+<style>
+    #preloader_1{
+    position:relative;
+}
+#preloader_1 span{
+    display:block;
+    bottom:0px;
+    width: 9px;
+    height: 5px;
+    background:#9b59b6;
+    position:absolute;
+    animation: preloader_1 1.5s  infinite ease-in-out;
+}
+#preloader_1 span:nth-child(2){
+    left:11px;
+    animation-delay: .2s;
+}
+#preloader_1 span:nth-child(3){
+    left:22px;
+    animation-delay: .4s;
+}
+#preloader_1 span:nth-child(4){
+    left:33px;
+    animation-delay: .6s;
+}
+#preloader_1 span:nth-child(5){
+    left:44px;
+    animation-delay: .8s;
+}
+@keyframes preloader_1 {
+    0% {height:5px;transform:translateY(0px);background:#9b59b6;}
+    25% {height:30px;transform:translateY(15px);background:#3498db;}
+    50% {height:5px;transform:translateY(0px);background:#9b59b6;}
+    100% {height:5px;transform:translateY(0px);background:#9b59b6;}
+}
+</style>
+
+<script>
+    var inputFileName
+    var mytext = "hahaha"
+    /*var schema_name = ""
+    var schema_id = -1
+    var major_id = -1
+    var intro1 = ""
+    var intro2 = ""
+    var intro6 = ""*/
+    var majorName = ''
+    var tmp_major_id=0
+    var schema_info = {}
+    const LINK_ERROR = 100
+    const DB_ERROR = 101
+    const NO_ERROR = 120
+    const JS_ERROR = 110
+    /* var enter_must_set = []
+     var uni_must_set = []
+     var uni_may_set = []
+     var pro_abc_set = []
+     var pro_core_set = []
+     var pro_may_set = []
+     var pro_do_set = []*/
+    var isLoading = false
+    var course = {}
+    var course_type = ["enter_must", "uni_must", "uni_may", "pro_abc", "pro_core", "pro_may", "pro_do"]
+    window.onload = function () {
+        createLeftPanel()
+        createRightPanel()
+    }
+
+    function createLeftPanel() {
+        let major_name =
+        {{major_name|tojson}}
+        var major_id =
+        {{major_id|tojson}}
+        var id_set =
+        {{id_set|tojson}}
+        var name_set =
+        {{name_set|tojson}}
+        var left_panel = document.getElementById("left_panel");
+        document.getElementById("major_name_text").innerHTML={{dep_code|tojson}};
+        for (i in major_name) {
+            let card_template = document.getElementById("card_template").cloneNode(true)
+            card_template.id = "card" + major_id[i]
+            card_template.style.display = ""
+            let body = card_template.querySelector(".card-body")
+            body.parentElement.id = "mycollapse" + i
+            card_template.querySelector(".card-link").innerHTML = major_name[i]
+            card_template.querySelector(".card-link").setAttribute("href", "#" + "mycollapse" + i)
+            for (j in id_set[i]) {
+                let item_template = document.getElementById("card_item_template").cloneNode(true)
+                item_template.style.display = ""
+                item_template.querySelector('.btn').innerHTML = name_set[i][j]
+                item_template.querySelector('.btn').id = "item" + id_set[i][j]
+                body.appendChild(item_template)
+            }
+            left_panel.appendChild(card_template)
+        }
+    }
+
+    function addItem(major_id, schema_id, schema_name) {
+        let item_template = document.getElementById("card_item_template").cloneNode(true)
+        item_template.style.display = ""
+        item_template.querySelector('.btn').innerHTML = schema_name
+        item_template.querySelector('.btn').id = "item" + schema_id
+        document.getElementById("card" + major_id).querySelector(".card-body").appendChild(item_template)
+    }
+
+    function ShowNameInput(obj) {
+        tmp_major_id = Number(obj.parentElement.parentElement.id.slice(4))
+        $("#createFileTitle").text("新建培养方案");
+        $('#createFileMModal').modal('show');
+
+    }
+
+    function addSchema(tmp_major_id, tmp_schema_name) {
+
+        let form = new FormData()
+        form.append("major_id", tmp_major_id)
+        form.append("name", tmp_schema_name)
+        $.ajax({
+            url: "{{ url_for('addCourseSchema') }}",
+            type: "post",
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.hasOwnProperty("success")) {
+                    tmp_schema_id = data["id"]
+                    addItem(tmp_major_id, tmp_schema_id, tmp_schema_name)
+                } else {
+                    alert("新建失败")
+                }
+            },
+            error: function (e) {
+                alert(tmp_major_id+" "+tmp_schema_name)
+            }
+        })
+    }
+
+    function createRightPanel() {
+        createTable("uni_must")
+        createTable("uni_may")
+        createTable("pro_abc")
+        createTable("pro_core")
+        createTable("pro_may")
+        createTable("pro_do")
+    }
+
+    //table operation
+    function createTable(name) {
+        let nodes = document.getElementById("enter_must").childNodes
+        for (var i = 0; i < nodes.length; i++) {
+            document.getElementById(name).appendChild(nodes[i].cloneNode(true))
+        }
+    }
+
+    function clearTable(name) {
+        let bodyObj = document.getElementById(name).querySelector("tbody")
+        for (let i = bodyObj.rows.length - 1; i > 0; i--) {
+            bodyObj.deleteRow(i)
+        }
+    }
+
+    function clearAllTable() {
+        for (i in course_type) {
+            clearTable(course_type[i])
+        }
+    }
+
+    function addRow(name, data) {
+        let bodyObj = document.getElementById(name).querySelector("tbody")
+        bodyObj.style.display = "";
+        let rowCnt = bodyObj.rows.length
+        let newRow = bodyObj.insertRow(rowCnt++);
+        let cellCount = bodyObj.rows[0].cells.length;
+        newRow.insertCell(0).innerHTML = data["code"]
+        newRow.insertCell(1).innerHTML = data["name"]
+        newRow.insertCell(2).innerHTML = data["score"]
+        newRow.insertCell(3).innerHTML = data["lab_score"]
+        newRow.insertCell(4).innerHTML = data["season"]
+        newRow.insertCell(5).innerHTML = data["require"]
+        newRow.insertCell(6).innerHTML = bodyObj.rows[0].cells[cellCount - 1].innerHTML
+        bodyObj.rows[0].style.display = "none"
+    }
+
+    //remove row is in the key event
+
+    //update table
+    function showSchema() {
+        //update text
+        document.getElementById("intro1_input").value = schema_info.intro1
+        document.getElementById("intro1_text").innerHTML = mulLineTextConvert(schema_info.intro1)
+        document.getElementById("intro2_input").value = schema_info.intro2
+        document.getElementById("intro2_text").innerHTML = mulLineTextConvert(schema_info.intro2)
+        document.getElementById("intro6_input").value = schema_info.intro6
+        document.getElementById("intro6_text").innerHTML = mulLineTextConvert(schema_info.intro6)
+        document.getElementById("schema_id_show").innerHTML = schema_info.id
+        document.getElementById("title").value = schema_info.title;
+        document.getElementById("intro3_input").value = schema_info.intro3
+        document.getElementById("intro3_text").innerHTML = mulLineTextConvert(schema_info.intro3)
+        //update form
+        for (i in course_type) {
+            let name = course_type[i];
+            clearTable(name)
+            for (j in course[name])
+                addRow(name, course[name][j])
+        }
+        updateTimeScoreTable()
+        updateIntro5()
+        let card_template = document.getElementById("card" + schema_info.major_id)
+        majorName = card_template.querySelector(".card-link").innerHTML
+        document.getElementById('intro4_text').innerHTML = majorName
+
+
+    }
+
+    function dealError(data) {
+        if (data == DB_ERROR) {
+            alert("数据库错误")
+            return false;
+        } else if (data == LINK_ERROR) {
+            alert("网络连接错误")
+            return false;
+        } else if (data == JS_ERROR) {
+            alert("网络连接错误")
+            return false;
+        }
+        return true;
+    }
+
+    //control
+    function onClick(type, inputobj) {
+        if (type == "add_course") {
+            let code = inputobj.parentElement.querySelectorAll("input")[0].value
+            addCourse(getCourseType(inputobj), code)
+        } else if (type == "remove_row") {
+            if (inputobj == null) return;
+            let parentTD = inputobj.parentNode;
+            let parentTR = parentTD.parentNode;
+            let parentTBODY = parentTR.parentElement;
+            let parentTable = parentTBODY.parentElement
+            let parentDiv = parentTable.parentElement;
+            let index = parentTR.rowIndex - 1
+            let code = parentTBODY.rows[index].cells[0].innerHTML
+            parentTBODY.removeChild(parentTR);
+            removeCourse(parentTable.parentElement.parentElement.id, code)
+        } else if (type == "load_schema") {
+            if(isLoading){
+                alert("正在加载其他页面")
+                return;
+            }
+            schema_id = Number(inputobj.id.slice(4))
+            let res = loadSchemaFrom(schema_id)
+            dealError(res)
+        } else if (type == "del_schema") {
+            delSchema()
+        }else if(type=="add_schema"){
+            var inputFileName = document.getElementById("fileName").value
+            if (inputFileName == "") {
+                alert("名称不能为空")
+            } else {
+                $('#createFileMModal').modal('hide');
+                addSchema(tmp_major_id, inputFileName);
+            }
+        }else if(type=="open_schema_html"){
+           //  var ow = window.open("\\static\\printSchema.html",'newwindow', 'height=100, width=400, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no');
+           //  ow.document.getElementById("intro1").innerHTML=document.getElementById("intro1_text").innerHTML
+            var ow = window.open()
+            ow.document.write(getHTML())
+             //ow.document.write(document.getElementById('schema_window').innerHTML);
+            //ow.document.getElementById()
+            //window.open ('schema_input.html', 'newwindow', 'height=100, width=400, top=0, left=0, toolbar=no, menubar=no, scrollbars=no, resizable=no,location=no, status=no')
+        }else if(type=="download_schema"){
+            downloadSchema()
+        }
+    }
+
+    function getCourseType(inputobj) {//find above to get id
+        while (1) {
+            for (x in course_type) {
+                if (inputobj.id == course_type[x]) {
+                    return course_type[x]
+                }
+            }
+            inputobj = inputobj.parentNode
+
+        }
+    }
+    function getHTML(){
+        let text=document.getElementById("printSchema").innerHTML
+        let doc=document.implementation.createHTMLDocument("title")
+        doc.body.innerHTML=text
+        doc.head.innerHTML="<meta charset=\"UTF-8\">"
+        doc.getElementById("mytitle").innerHTML=document.getElementById("title").value
+        doc.getElementById("intro1").innerHTML=document.getElementById("intro1_text").innerHTML
+        doc.getElementById("intro2").innerHTML=document.getElementById("intro2_text").innerHTML
+        doc.getElementById("intro3").innerHTML=document.getElementById("intro3_text").innerHTML+document.getElementById("time_score_area").innerHTML
+        doc.getElementById("intro4").innerHTML=document.getElementById("intro4_text").innerHTML
+        doc.getElementById("intro5").innerHTML=document.getElementById("intro5_text").innerHTML
+        doc.getElementById("intro6").innerHTML=document.getElementById("intro6_text").innerHTML
+        for(i in course_type){
+            let name=course_type[i]
+            doc.getElementById(name).innerHTML=document.getElementById(name).querySelector("div").innerHTML
+            tbody = doc.getElementById(name).querySelector("table")
+            for(let j=0;j<tbody.rows.length;j++){
+                tbody.rows[j].deleteCell(tbody.rows[j].cells.length-1)
+            }
+        }
+
+        return doc.documentElement.innerHTML
+    }
+    function removeCourse(name, code) {
+        let flag = false
+        for (var i = 0; i < course[name].length; i++) {
+            if (course[name][i]['code'] == code) {
+                course[name].splice(i, 1)
+
+                flag = true
+                break
+            }
+        }
+        if (!flag) alert("course not find")
+    }
+
+    function updateTimeScoreTable() {
+        let table = document.getElementById('time_score_table')
+        let rowNum = table.rows
+        let allScore = 0
+        for (let i = 1; i < course_type.length; i++) {
+            let courseName = course_type[i]
+            let score = 0;
+            for (j in course[courseName]) {
+                score += course[courseName][j].score
+            }
+            table.rows[i].cells[1].innerHTML = score
+            allScore += score
+        }
+        table.rows[course_type.length].cells[1].innerHTML = allScore
+    }
+
+    function updateIntro5() {
+        let str = '专业基础课:'
+        for (j in course['pro_abc']) {
+            str += course['pro_abc'][j].name + ";"
+        }
+        str += '<br/>'
+        str += '专业核心课:'
+        for (j in course['pro_core']) {
+            str += course['pro_core'][j].name + ";"
+        }
+        document.getElementById('intro5_text').innerHTML = str
+
+    }
+
+    //database query
+    function loadSchemaFrom(schema_id) {
+        isLoading = true
+        document.getElementById("right_bg").style.display=''
+        document.getElementById("preloader_1").style.display=''
+        document.getElementById("right_panel").style.display="None"
+        let form = new FormData()
+        form.append("id", schema_id)
+        let res = NO_ERROR;
+        $.ajax({
+            url: "{{ url_for('querySchema') }}",
+            type: "post",
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                isLoading = false
+                if (data.hasOwnProperty("success")) {
+                    clearAllTable()
+                    schema_info = data['schema_info']
+                    course = data['course']
+                    showSchema()
+            document.getElementById("right_bg").style.display="None"
+                document.getElementById("preloader_1").style.display="None"
+                    document.getElementById("right_panel").style.display=""
+                    res = NO_ERROR;
+                } else {
+                    res = DB_ERROR;
+                }
+            },
+            error: function (e) {
+                isLoading = false
+                res = LINK_ERROR;
+            }
+        })
+        return res
+    }
+
+    function delSchema() {
+        if (isLoading) {
+            alert("培养方案还在加载中")
+        }
+        if (schema_info['id'] == undefined) return;
+
+        let form = new FormData()
+        form.append("schema_id",schema_info['id'])
+        //form.append("schema_info",  schema_info)
+        //form.append("course",course)
+        $.ajax({
+            url: "{{ url_for('delSchema') }}",
+            type: "post",
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.hasOwnProperty("success")) {
+                    alert("删除成功")
+                    let node=
+                    document.getElementById("item"+schema_info['id']).parentNode.remove()
+                } else {
+                }
+            },
+            error: function (e) {
+                alert("删除失败")
+            }
+        })
+    }
+    function downloadSchema() {
+        let form = new FormData()
+        form.append("html_str","<html>"+getHTML()+"</html>")
+         $.ajax({
+            url: "{{ url_for('generateSchema') }}",
+            type: "post",
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.hasOwnProperty("success")) {
+                    alert("下载成功")
+                    window.open("{{ url_for('downloadSchema') }}","hahaha")
+                    return 1;
+                } else {
+                    return DB_ERROR
+                }
+            },
+            error: function (e) {
+                return LINK_ERROR
+            }
+        })
+    }
+    function saveSchema(obj) {
+        if (obj == null) return;
+        if (isLoading) {
+            alert("培养方案还在加载中")
+        }
+        schema_info['title'] = document.getElementById('title').value
+        if (schema_info['id'] == undefined) return;
+
+        let form = new FormData()
+        form.append("schema_info", JSON.stringify(schema_info))
+        form.append("course", JSON.stringify(course))
+        //form.append("schema_info",  schema_info)
+        //form.append("course",course)
+        $.ajax({
+            url: "{{ url_for('saveSchema') }}",
+            type: "post",
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.hasOwnProperty("success")) {
+                    alert("保存成功")
+                    return 1;
+                } else {
+                    return DB_ERROR
+                }
+            },
+            error: function (e) {
+                return LINK_ERROR
+            }
+        })
+    }
+
+    function addCourse(name, code) {
+        let form = new FormData()
+        form.append("code", code)
+        $.ajax({
+            url: "{{ url_for('queryCourse') }}",
+            type: "post",
+            data: form,
+            dataType: 'json',
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                if (data.hasOwnProperty("success")) {
+                    let cs = data["course"]
+                    course[name].push(cs);
+                    addRow(name, cs);
+                    updateTimeScoreTable()
+                    updateIntro5()
+                } else {
+                    alert("查询课程失败")
+                }
+            },
+            error: function (e) {
+                alert("连接数据库失败")
+            }
+        })
+    }
+
+    function mulLineTextConvert(str) {
+        return str.replace(/\n/g, '<br/>')
+    }
+
+    function updateIntro(inputobj) {
+        if ((inputobj.parentElement.parentElement.parentElement.parentElement).id == "intro1_modal") {
+            schema_info.intro1 = document.getElementById("intro1_input").value
+            document.getElementById("intro1_text").innerHTML = mulLineTextConvert(schema_info.intro1)
+        } else if ((inputobj.parentElement.parentElement.parentElement.parentElement).id == "intro2_modal") {
+            schema_info.intro2 = document.getElementById("intro2_input").value
+            document.getElementById("intro2_text").innerHTML = mulLineTextConvert(schema_info.intro2)
+        } else if ((inputobj.parentElement.parentElement.parentElement.parentElement).id == "intro6_modal") {
+            schema_info.intro6 = document.getElementById("intro6_input").value
+            document.getElementById("intro6_text").innerHTML = mulLineTextConvert(schema_info.intro6)
+        } else if ((inputobj.parentElement.parentElement.parentElement.parentElement).id == "intro3_modal") {
+            schema_info.intro3 = document.getElementById("intro3_input").value
+            document.getElementById("intro3_text").innerHTML = mulLineTextConvert(schema_info.intro3)
+        }
+    }
+
+
+</script>
+
+<div class="row">
+    <div class="col-md-2 px-md-0" style="background: #343a40" id="left_panel">
+        <div style="height: 50px"><a>&emsp;</a><a style="color:white;font-size: 30px" id="major_name_text">物理系</a></div>
+        <div class="card" style="display: None;background: #343a40" id="card_template">
+            <div class="card-header">
+                <a class="card-link" data-toggle="collapse" style="color:white" href="#collapseOne">智能科学与技术</a>&emsp;&emsp;<button
+                    type="button" onclick="ShowNameInput(this)">+
+            </button>
+            </div>
+            <div id="collapseOne" class="collapse">
+                <div class="card-body">
+                    <div id="card_item_template" style="display: None">
+                        <button type="button" style="color:white" class="btn" onclick="onClick('load_schema',this)">
+                            2017培养方案
+                        </button>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div  id="right_bg" class="col-md-10  px-md-0"style="height: 1030px;width:1100px;background: #99abb4">
+    <div id="preloader_1" style="position:absolute;  top: 50%;
+  left:50%;display: None">
+            <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+        </div>
+</div>
+    <div class="col-md-10  px-md-0" id="right_panel" style="display: None">
+        <div>
+            <nav class="row-md-2">
+                <nav class="navbar navbar-expand-sm bg-dark navbar-dark ">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#intro_head">前言</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#enter_must">专业先修</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#uni_must">通识必修</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#uni_may">通识选修</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pro_abc">专业基础</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pro_core">专业核心</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pro_may">专业选修</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#pro_do_head">专业实践</a>
+                        </li>
+                    </ul>
+                    <a id="schema_id_show"></a>
+                    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<button type="button" class="btn-sm btn-success"
+                                                                onclick="dealError(saveSchema(this))">保存
+                </button>
+                    <button type="button" class="btn-sm btn-success" onclick="onClick('del_schema',this)">删除</button>
+                     <button type="button" class="btn-sm btn-success" onclick="onClick('open_schema_html',this)">预览</button>
+                    <button type="button" class="btn-sm btn-success" onclick="onClick('download_schema',this)">下载</button>
+                </nav>
+            </nav>
+            <div class="row-md-10 px-md-4 pt-md-5">
+                <div style="height:1030px;overflow:auto" id="schema_window" data-spy="scroll"
+                     data-target=".navbar" data-offset="400">
+                    <div style="text-align:center;">
+                        <h2><input size="40" id="title" style="height:35px;font-size:30px;border:0">(标题)</input> </h2>
+                    </div>
+                    <h4 id="intro_head">一、系部专业介绍
+                        <button type="button" class="btn-primary btn-sm" data-toggle="modal"
+                                data-target="#intro1_modal">
+                            +
+                        </button>
+                    </h4>
+                    <p id="intro1_text"></p>
+                    <!-- 模态框 -->
+                    <div class="modal fade" id="intro1_modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- 模态框头部 -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">系部专业介绍</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- 模态框主体 -->
+                                <div class="modal-body">
+                                    <textarea rows="15" cols="60" id="intro1_input"></textarea>
+                                </div>
+                                <!-- 模态框底部 -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="updateIntro(this)">确定
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <br>
+                    <hr>
+                    <h4>二、专业培养目标及培养要求
+                        <button type="button" class="btn-primary btn-sm" data-toggle="modal"
+                                data-target="#intro2_modal">
+                            +
+                        </button>
+                    </h4>
+                    <p id="intro2_text"></p>
+                    <div class="modal fade" id="intro2_modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- 模态框头部 -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">系部专业介绍</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- 模态框主体 -->
+                                <div class="modal-body">
+                                    <textarea rows="15" cols="60" id="intro2_input"></textarea>
+                                </div>
+                                <!-- 模态框底部 -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="updateIntro(this)">确定
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+                    <hr>
+                    <h4>三、学制、授予学位及毕业学分要求
+                        <button type="button" class="btn-primary btn-sm" data-toggle="modal"
+                                data-target="#intro3_modal">
+                            +
+                        </button>
+                    </h4>
+                    <p id="intro3_text"></p>
+                    <!-- 模态框 -->
+                    <div class="modal fade" id="intro3_modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- 模态框头部 -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">系部专业介绍</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- 模态框主体 -->
+                                <div class="modal-body">
+                                    <textarea rows="15" cols="60" id="intro3_input"></textarea>
+                                </div>
+                                <!-- 模态框底部 -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="updateIntro(this)">确定
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div  id="time_score_area">
+                    <p>*学分汇总表</p>
+                    <table  border="1" cellpadding="10" cellspacing="5" id="time_score_table">
+                        <thead>
+                        <tr>
+                            <th>课程类别</th>
+                            <th>总学分</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>通识必修</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>通识选修</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>专业基础</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>专业核心</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>专业选修</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>实践课程</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>合计</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+</div>
+
+                    <br>
+                    <hr>
+                    <h4>四、专业类及专业代码</h4>
+                    <p id="intro4_text"></p>
+                    <br>
+                    <hr>
+                    <h4>五、专业主要（干）课程</h4>
+                    <p id="intro5_text"></p>
+                    <br>
+                    <hr>
+                    <h4>六、主要实践性教学环节
+                        <button type="button" class="btn-primary btn-sm" data-toggle="modal"
+                                data-target="#intro6_modal">
+                            +
+                        </button>
+                    </h4>
+
+                    <p id="intro6_text"></p>
+                    <div class="modal fade" id="intro6_modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- 模态框头部 -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title">系部专业介绍</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- 模态框主体 -->
+                                <div class="modal-body">
+                                    <textarea rows="15" cols="60" id="intro6_input"></textarea>
+                                </div>
+                                <!-- 模态框底部 -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                            onclick="updateIntro(this)">确定
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <hr>
+                    <h4>七、进入专业前应修读完成课程的要求</h4>
+                    <div id="enter_must">
+                        <button type="button" class="btn-primary btn-sm" onclick="onClick('add_course',this)">+</button>
+                        <input value=""></input><br>
+                        <div>
+                        <table border="1" cellpadding="10" cellspacing="5" >
+                            <thead>
+                            <tr>
+                                <th>课程编号</th>
+                                <th>课程名称</th>
+                                <th>学分</th>
+                                <th>其中实验学分</th>
+                                <th>开课学期</th>
+                                <th>先修课程</th>
+                                <th>移除</th>
+                            </tr>
+                            </thead>
+                            <tbody style="display: none">
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <input type="button" value="删除" onclick="onClick('remove_row',this)">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                            </div>
+                    </div>
+                    <br>
+                    <hr>
+                    <h4>八、通识必修课程教学修读要求</h4>
+                    <div id="uni_must">
+                    </div>
+                    <br>
+                    <hr>
+                    <h4>九、通识选修课程修读要求</h4>
+                    <div id="uni_may">
+                    </div>
+                    <br>
+                    <hr>
+                    <h4>十、专业课程教学安排一览表</h4>
+                    <h6>专业基础课</h6>
+                    <div id="pro_abc">
+                    </div>
+                    <br>
+                    <hr>
+                    <h6>专业核心课</h6>
+                    <div id="pro_core">
+                    </div>
+                    <br>
+                    <hr>
+                    <h6>专业选修课</h6>
+                    <div id="pro_may">
+                    </div>
+                    <br>
+                    <hr>
+                    <h6>专业实践课</h6>
+                    <div id="pro_do">
+                    </div>
+                    <br>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="createFileMModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createFileTitle">创建培养方案</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="fileName" class="col-form-label">名称</label>
+                        <input type="text" autofocus class="form-control" id="fileName">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="createFileSureBut" data-dismiss="modal" onclick="onClick('add_schema',this)">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="printSchema" style="display: None">
+<div style="width:870px">
+ <br>
+    <br>
+    <p style="font-family: 'Arial Black';font-weight: bolder;text-align: center;font-size: 20px" id="mytitle">物理学专业本科人才培养方案</p>
+    <h3>一、系部专业介绍</h3>
+    <div id="intro1"></div>
+    <h3>二、专业培养目标及培养要求</h3>0
+    <div id="intro2"></div>
+<h3>三、学制、授予学位及毕业学分要求</h3>
+    <div id="intro3"></div>
+    <h3>四、专业类及专业代码</h3>
+    <div id="intro4"></div>
+    <h3>五、专业主要（干）课程</h3>
+    <div id="intro5"></div>
+<h3>六、主要实践性教学环节</h3>
+        <div id="intro6"></div>
+<h3>七、进入专业前应修读完成课程的要求</h3>
+            <div id="enter_must"></div>
+<h3>八、通识必修课程教学修读要求</h3>
+    <div id="uni_must"></div>
+<h3>九、通识选修课程修读要求</h3>
+     <div id="uni_may"></div>
+<h3>十、专业课程教学安排一览表</h3>
+<h4>专业基础课</h4>
+     <div id="pro_abc"></div>
+<h4>专业核心课</h4>
+     <div id="pro_core"></div>
+<h4>专业选修课</h4>
+     <div id="pro_may"></div>
+<h4>专业实践课</h4>
+ <div id="pro_do"></div>
+
+</div>
+</div>
+</html>
