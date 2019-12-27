@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block flash %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="text-align: center">
+            <strong>{{ message }}</strong></div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+{% endblock %}
+{% block content %}
+    <h1>欢迎使用Courschema论坛</h1>
+      <a href="/fornum/new/">发表新帖</a>
+<a href="/fornum/reply/">回复旧帖</a>
+    <a href="../">返回</a>
+    <h3>主题帖</h3>
+    {% for i in tofo.keys() %}
+    <h5>{{ i }}</h5>
+        {%for j in tofo[i]%}
+            {{ j[0] }}:
+            <pre>{{ j[1] }}</pre>
+            <br>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

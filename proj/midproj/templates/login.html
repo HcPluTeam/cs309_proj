@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block flash %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" style="text-align: center">
+            <strong>{{ message }}</strong></div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+{% endblock %}
+{% block formtable %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" href="../static/font-awesome.min.css">
+<link rel='stylesheet prefetch' href='../static/bootstrap.min.css'>
+<link rel="stylesheet" href="../static/style.css" media="screen" type="text/css" />
+</head>
+<body class="login-page">
+<br></br>
+<center><img src="https://ae01.alicdn.com/kf/H9b49ff8600f341b6ab683ca42e7cbf93D.png" width="150" height="150"></center>
+<br></br>
+<center><h2 class="text-white">Welcome To SUSTC Course Schema</h2></center>
+<div class="login-form">
+
+        
+
+		<div class="login-content">
+			<div class="form-login-error">
+			<h3>Invalid login</h3>
+			<p>Enter <strong>demo</strong>/<strong>demo</strong> as login and password.</p>
+			</div>
+			<form method="post" role="form" id="form_login">
+                   
+				<div class="form-group">
+					<div class="input-group">
+					<div class="input-group-addon">
+						<i class="fa fa-user"></i>
+					</div>
+						<input type="text" class="form-control" name="login_userid" id="username" placeholder="Username" autocomplete="off" />
+				</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+					<div class="input-group-addon">
+						<i class="fa fa-key"></i>
+					</div>
+						<input type="password" class="form-control" name="login_usercode" id="password" placeholder="Password" autocomplete="off" />
+				</div>
+				</div>
+				<div class="form-group">
+				<button type="submit" class="btn btn-primary btn-block btn-login">
+					<i class="fa fa-sign-in"></i>
+					Login In
+				</button>
+			</div>
+				<!-- Implemented in v1.1.4 -->				<div class="form-group">
+				<em>- or -</em>
+			</div>
+				<div class="form-group">
+					<button type="button" class="btn btn-default btn-lg btn-block facebook-button">
+					&#160;&#160;
+					<i class="fa fa-facebook"></i>
+                    <a href="/login_help/" class="text-white">|  Sign up or forget password</a>
+				</button>
+				</div>
+	
+		</form>
+			
+		</div>
+	</div>
+ </div>
+
+</body>
+</html>
+{% endblock %}

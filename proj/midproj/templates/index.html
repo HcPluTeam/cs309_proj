@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+<head style="color: white">
+  <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <link rel="stylesheet" href="../static/lb.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel='stylesheet prefetch' href='../static/bootstrap.min.css'>
+    <link rel="stylesheet" href="../static/style.css" media="screen" type="text/css" />
+  <script src="../static/lb.js"></script>
+  <script>
+    window.onload = function () {
+      const options = {
+        id: 'lb-1',              // 轮播盒ID
+        speed: 1000,              // 轮播速度(ms)
+        delay: 5000,             // 轮播延迟(ms)
+        direction: 'left',       // 图片滑动方向
+        moniterKeyEvent: true,   // 是否监听键盘事件
+        moniterTouchEvent: true  // 是否监听屏幕滑动事件
+      }
+      const lb = new Lb(options);
+      lb.start();
+    }
+  </script>
+
+</head>
+
+
+<div style="position: absolute;
+            margin-left:2%;
+            margin-top: 2%;
+            z-index:999;">
+    	<button type="button" class="btn btn-default btn-lg btn-block facebook-button">
+					&#160;&#160;
+					<i class="fa fa-facebook"></i>
+                    <a href="/login/">|  登录 &nbsp &nbsp </a>
+        </button>
+        <section id="container">
+            <script src="../static/MiniDialog-es5.min.js"></script>
+        <script src="../static/demo_dialog.js"></script>
+</section>
+</div>
+  <div class="lb-box" id="lb-1" style="width:1900px; height:930px" >
+    <div class="lb-content">
+      <div class="lb-item active">
+        <a href="#">
+          <img src="https://pic1.superbed.cn/item/5df1f3d11f8f59f4d66f21e4.png"> width="150" height="150" alt="picture loss">
+          <span>秋分｜一抹秋色南科里  </span>
+        </a>
+      </div>
+      <div class="lb-item">
+        <a href="#">
+         <img src="https://pic3.superbed.cn/item/5df1f4811f8f59f4d66fe43d.png"> width="150" height="150" alt="picture loss">
+          <span>南科视界｜形影腾腾夕阳里，一片晕红沾衣襟</span>
+        </a>
+      </div>
+      <div class="lb-item">
+        <a href="#">
+          <img src="https://pic3.superbed.cn/item/5df1f5111f8f59f4d6709dfa.png"> width="150" height="150" alt="picture loss">
+          <span>南科视界｜悄悄地剪下他的影子</span>
+        </a>
+      </div>
+      <div class="lb-item">
+        <a href="#">
+          <img src="https://pic2.superbed.cn/item/5df1f6141f8f59f4d6719626.png"> width="150" height="150" alt="picture loss">
+          <span>我们一起看过的南科四季风景 </span>
+        </a>
+      </div>   
+    </div>
+    <!-- 轮播标志 -->
+    <ol class="lb-sign">
+      <li class="active">1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+    </ol>
+    <!-- 轮播控件 -->
+    <div class="lb-ctrl left">＜</div>
+    <div class="lb-ctrl right">＞</div>
+  </div>
+<div style="position: absolute;
+            margin-top: 50%;
+            z-index:-1;">
+    <img src="https://pic3.superbed.cn/item/5df244eb1f8f59f4d6c66409.jpg">
+</div>
+<div style="position: absolute;
+            margin-top: 52%;
+            width:80%;
+            margin-left: 10%;
+            z-index:990;
+            background-color: white;">
+    <font size="8">
+        <p><center>2019 级通识理工基础课程分级教学方案</center></p>
+     <p>&emsp;&emsp;根据学校发展的需要，为使我校通识基础课更能够满足我校发展的需求， 使基础课程教学更好服务各
+专业的培养目标，更好实现学生的个性化培养，在广泛征求各院系对各基础课分级教学意见和建议的基础
+上， 对高等数学、线性代数、大学物理、化学原理、生物学、计算机导论、计算机程序设计基础、”大学
+        英语”等通识课程进行分级教学。分级教学的原则为：</p>
+    <p>&emsp;&emsp;1. 课程设置能够充分发展我校学科专业优势和国际化特色。</p>
+    <p>&emsp;&emsp;2. 能够更加有利于学生知识与能力结构的发展。</p>
+    <p>&emsp;&emsp;3. 能够真正实现我校人才培养的个性化，使学生在有挑战、有支撑、系统化的环境中充分发展自己的
+    学术潜力。</p>
+    <p>&emsp;&emsp;4. 兼顾通识教育、学生全面发展、学生专业选择、专业发展的平衡。</p>
+    <p>&emsp;&emsp;5. 能够更加系统和有方法地引导学生，做好通识教育与专业教育的衔接.</p>
+    </font>
+</div>
+</body>
+</html>

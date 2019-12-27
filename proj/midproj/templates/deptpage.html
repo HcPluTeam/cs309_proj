@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block formtable %}
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<link rel="stylesheet" href="../../static/bootstrap.css">
+<link rel="stylesheet" href="../../static/style1.css">
+
+</head>
+<body>
+
+<div id="wrapper">
+	<div class="overlay"></div>
+
+	<!-- Sidebar -->
+	<nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+		<ul class="nav sidebar-nav">
+			<li class="sidebar-brand">
+				<a href="#">
+                        系秘书&nbsp; {{ name }}
+				</a>
+            </li>
+            <br></br>
+			<li>
+				<a href="/{{ userauth }}/{{ userid }}/query/"><i class="fa fa-fw fa-home"></i> 查询课程</a>
+			</li>
+			<li>
+				<a href="/{{ userauth }}/{{ userid }}/modify/"><i class="fa fa-fw fa-folder"></i> 预览方案</a>
+			</li>
+			<li>
+				<a href="/dept/{{ userid }}/addingpre/"><i class="fa fa-fw fa-file-o"></i> 编写课程</a>
+			</li>
+			<li>
+				<a href="/dept/{{ userid }}/submitcontent/"><i class="fa fa-fw fa-file-o"></i> 编写文本</a>
+			</li>
+			
+			<li>
+				<a href="/logout/"><i class="fa fa-fw fa-bank"></i>&nbsp;注销账号</a>
+			</li>
+			
+		</ul>
+	</nav>
+	<!-- /#sidebar-wrapper -->
+
+	<!-- Page Content -->
+	<div id="page-content-wrapper">
+	  <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+		<span class="hamb-top"></span>
+		<span class="hamb-middle"></span>
+		<span class="hamb-bottom"></span>
+	  </button>
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 col-lg-offset-2">
+					<font color="white">
+                        <font size="20"><b>通识理工基础课程分级方案</b></font></b><br></br>
+根据学校发展的需要，为使我校通识基础课更能够满足我校发展的需求， 使基础课程教学更好服务各
+专业的培养目标，更好实现学生的个性化培养，在广泛征求各院系对各基础课分级教学意见和建议的基础
+上， 对高等数学、线性代数、大学物理、化学原理、生物学、计算机导论、计算机程序设计基础、”大学
+                        英语”等通识课程进行分级教学。分级教学的原则为：<br></br>
+&emsp;1. 课程设置能够充分发展我校学科专业优势和国际化特色。<br></br>
+&emsp;2. 能够更加有利于学生知识与能力结构的发展。<br></br>
+&emsp;3. 能够真正实现我校人才培养的个性化，使学生在有挑战、有支撑、系统化的环境中充分发展自己的
+学术潜力。<br></br>
+&emsp;4. 兼顾通识教育、学生全面发展、学生专业选择、专业发展的平衡。<br></br>
+                       &emsp; 5. 能够更加系统和有方法地引导学生，做好通识教育与专业教育的衔接。<br></br></font>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /#page-content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<script src="../../static/jquery-1.8.3.min.js"></script>
+<script src="../../static/bootstrap.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+	  var trigger = $('.hamburger'),
+		  overlay = $('.overlay'),
+		 isClosed = false;
+
+		trigger.click(function () {
+		  hamburger_cross();      
+		});
+
+		function hamburger_cross() {
+
+		  if (isClosed == true) {          
+			overlay.hide();
+			trigger.removeClass('is-open');
+			trigger.addClass('is-closed');
+			isClosed = false;
+		  } else {   
+			overlay.show();
+			trigger.removeClass('is-closed');
+			trigger.addClass('is-open');
+			isClosed = true;
+		  }
+	  }
+	  
+	  $('[data-toggle="offcanvas"]').click(function () {
+			$('#wrapper').toggleClass('toggled');
+	  });  
+	});
+</script>
+
+
+</body>
+</html>
+
+
+{% endblock %}

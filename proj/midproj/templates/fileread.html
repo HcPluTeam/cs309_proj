@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <center><h3>表格读取</h3></center>
+     <center>上传xls文件</center>
+    <center>注意，请严格对照表格格式，否则数据无法插入</center>
+<form action="/dept/{{ thisid }}/addingpre/excelread/" method='POST' enctype="multipart/form-data">
+    <div>
+    	上传文件 <input type="file" name='uploads'>
+    </div>
+    <input type="submit" value='上传'>
+</form>
+{% endblock %}

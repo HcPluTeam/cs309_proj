@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block formtable %}
+    <form action="/fornum/new/" method="post">
+    <center><caption id="login_a"><h2>创建新的主题</h2></caption></center>
+    <center>你的昵称:<input type="text" name="t0"><br></center>
+    <center>标题:<input type="text" name="t1"><br></center>
+    <center>内容:<textarea class="form-control" rows="10" name="t2" ></textarea></center>
+<center><input type="submit" id="add_button" value="提交" ></center>
+        <a href="../">返回</a>
+</form>
+{% endblock %}

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+<head style="color: white">
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="renderer" content="webkit">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <link rel="stylesheet" href="../static/lb.css">
+    <link rel="stylesheet" href="../static/font-awesome.min.css">
+    <link rel='stylesheet prefetch' href='../static/bootstrap.min.css'>
+    <link rel="stylesheet" href="../static/style.css" media="screen" type="text/css" />
+  <script src="../static/lb.js"></script>
+
+{% extends "base.html" %}
+{% block content %}
+      <div style="position: absolute;
+            margin-left:0%;
+            margin-top: -1%;
+            z-index:999;">
+<button type="button" class="btn btn-default btn-lg btn-block facebook-button">
+    &#160;&#160;
+    <i class="fa fa-facebook"></i>
+    <a href="../">|  返回 &nbsp &nbsp </a>
+</button>
+    </div>
+    <br><br>
+    <h3>以下是课程更新消息</h3>
+    {% for i in mailbox %}
+        {{ i }}<br>
+    {% endfor %}
+{% endblock %}
